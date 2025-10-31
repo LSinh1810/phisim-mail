@@ -1,0 +1,21 @@
+# Root ignore
+
+# Logs
+*.log
+
+# Env
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python artifacts (nếu có)
+__pycache__/
+*.pyc
+
+# Executables/binaries (đã xoá nhưng phòng hờ)
+*.exe
+
+# Build caches
+.cache/
