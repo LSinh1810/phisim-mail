@@ -18,14 +18,11 @@ export const createCampaign = async (req, res) => {
     const transporter = nodemailer.createTransport({
       // service: 'gmail',
       host: 'smtp.sendgrid.net',
-      port: 587,
+      port: 2525,
       secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.SG_USER,
         pass: process.env.SG_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false // Tắt kiểm tra chứng chỉ SSL/TLS
       },
       connectionTimeout: 60000,
       greetingTimeout: 30000
