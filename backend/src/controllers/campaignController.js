@@ -16,13 +16,13 @@ export const createCampaign = async (req, res) => {
 
     // cấu hình gửi mail với Gmail
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true, // true for 465, false for other ports
+      // service: 'gmail',
+      host: 'smtp.sendgrid.net',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
+        user: process.env.SG_USER,
+        pass: process.env.SG_PASS,
       },
       tls: {
         rejectUnauthorized: false // Tắt kiểm tra chứng chỉ SSL/TLS
@@ -46,15 +46,14 @@ export const createCampaign = async (req, res) => {
               <li>Đề thi mẫu TOEIC chuẩn quốc tế</li>
               <li>File hướng dẫn và phần mềm hỗ trợ giải đề</li>
             </ul>
-            <p style="color:#d62828;"><b>Hãy tải tất cả file, mở file <b>password-exe.png</b> để lấy mật khẩu giải nén!</b></p>
             <a href="${trackUrl}" style="display:inline-block;margin:10px 0;padding:12px 24px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;">Tải trọn bộ giáo trình TOEIC & phần mềm miễn phí</a>
             <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
             <p style="color: #666; font-size: 12px;">Ưu đãi chỉ dành cho 100 người đầu tiên.</p>
           </div>
         `;
         // Cấu hình trường From
-        const fromEmail = process.env.GMAIL_FROM || process.env.GMAIL_USER;
-        const fromName = process.env.GMAIL_FROM_NAME || 'PhishSim (Quảng cáo TOEIC)';
+        const fromEmail = process.env.SG_FROM;
+        const fromName = process.env.SG_FROM_NAME || 'PhishSim (Quảng cáo TOEIC)';
         
         const mailOptions = {
           from: `"${fromName}" <${fromEmail}>`,
