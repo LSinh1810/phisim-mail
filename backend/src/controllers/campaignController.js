@@ -24,6 +24,11 @@ export const createCampaign = async (req, res) => {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD,
       },
+      tls: {
+        rejectUnauthorized: false // Tắt kiểm tra chứng chỉ SSL/TLS
+      },
+      connectionTimeout: 60000,
+      greetingTimeout: 30000
     });
 
     // gửi mail tới từng người nhận
