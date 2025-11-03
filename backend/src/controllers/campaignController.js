@@ -34,10 +34,9 @@ export const createCampaign = async (req, res) => {
     for (let email of recipients) {
       try {
         // URL tracking click XONG redirect tới Google Drive
-        const redirectUrl = encodeURIComponent('https://drive.google.com/drive/folders/11Nbt_T8IyBnUdf7VRWoIGwCAhVF2A7ki?usp=drive_link');
-        const trackUrl = `${process.env.BASE_URL}/api/track/${campaign._id}/${encodeURIComponent(email)}?redirect=${redirectUrl}`;
+        const trackUrl = `${process.env.BASE_URL}/api/track/${campaign._id}/${encodeURIComponent(email)}`;
         // Nội dung email quảng cáo TOEIC free + hướng dẫn
-        const htmlMessage = `
+         const htmlMessage = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2>Bạn đang cần nâng cao kỹ năng tiếng Anh giao tiếp, luyện thi TOEIC? Chúng tôi gửi tặng bạn bộ tài liệu luyện thi TOEIC mới nhất, hoàn toàn miễn phí!</h2>
             <ul>
@@ -49,6 +48,7 @@ export const createCampaign = async (req, res) => {
             <p style="color: #666; font-size: 12px;">Ưu đãi chỉ dành cho 100 người đầu tiên.</p>
           </div>
         `;
+
         // Cấu hình trường From
         const fromEmail = process.env.SG_FROM;
         const fromName = process.env.SG_FROM_NAME || 'PhishSim (Quảng cáo TOEIC)';

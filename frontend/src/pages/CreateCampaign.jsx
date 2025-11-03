@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import useCampaignStore from '../store/useCampaignStore';
 import { toast } from 'sonner';
+import { Shield } from 'lucide-react';
 
 const schema = z.object({
   name: z.string().min(3, "Tên chiến dịch phải có ít nhất 3 ký tự"),
@@ -84,44 +85,19 @@ export default function CreateCampaign() {
       }
       
       // Nội dung mặc định
-      const defaultSubject = "Cảnh báo bảo mật";
+      const defaultSubject = "Tặng bạn bộ tài liệu luyện thi TOEIC miễn phí!";
       const defaultMessage = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          
-          <p>Xin chào,</p>
-          
-          <p>Chúng tôi phát hiện tài khoản của bạn đã được đăng nhập từ một thiết bị hoặc vị trí khác thường. Nếu đây không phải là bạn, vui lòng thực hiện các bước sau ngay lập tức:</p>
-          
-          <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #d32f2f; margin: 20px 0;">
-            <p style="margin: 0; font-weight: bold;">Thông tin đăng nhập:</p>
-            <p style="margin: 5px 0 0 0;">• Thời gian: ${new Date().toLocaleString()}</p>
-            <p style="margin: 5px 0 0 0;">• Địa chỉ IP: 192.168.1.100</p>
-            <p style="margin: 5px 0 0 0;">• Vị trí: Hà Nội, Việt Nam</p>
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2>Bạn đang cần nâng cao kỹ năng tiếng Anh giao tiếp, luyện thi TOEIC? Chúng tôi gửi tặng bạn bộ tài liệu luyện thi TOEIC mới nhất, hoàn toàn miễn phí!</h2>
+            <ul>
+              <li>Đề thi mẫu TOEIC chuẩn quốc tế</li>
+              <li>File hướng dẫn và phần mềm hỗ trợ giải đề</li>
+            </ul>
+            <a href="#" style="display:inline-block;margin:10px 0;padding:12px 24px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;">Tải trọn bộ giáo trình TOEIC & phần mềm miễn phí</a>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            <p style="color: #666; font-size: 12px;">Ưu đãi chỉ dành cho 100 người đầu tiên.</p>
           </div>
-          
-          <p>Để bảo vệ tài khoản của bạn, vui lòng:</p>
-          <ol>
-            <li>Nhấn vào liên kết bên dưới để đổi mật khẩu</li>
-            <li>Kích hoạt xác thực 2 yếu tố (2FA)</li>
-            <li>Kiểm tra các hoạt động đăng nhập gần đây</li>
-          </ol>
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="background-color: #d32f2f; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
-              ĐỔI MẬT KHẨU NGAY
-            </a>
-          </div>
-          
-          <p style="color: #666; font-size: 12px; margin-top: 30px;">
-            Nếu bạn không thực hiện đăng nhập này, vui lòng bỏ qua email này và liên hệ với bộ phận IT ngay lập tức.
-          </p>
-          
-          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-          <p style="color: #999; font-size: 11px; text-align: center;">
-            Email này được gửi tự động từ hệ thống bảo mật. Vui lòng không trả lời email này.
-          </p>
-        </div>
-      `;
+        `;
       
       const payload = {
         name: data.name,
@@ -148,9 +124,7 @@ export default function CreateCampaign() {
       {/* Header */}
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
+          <Shield className="w-8 h-8 text-white" />
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">Tạo chiến dịch phishing</h1>
         <p className="text-gray-400">Thiết kế và triển khai một cuộc tấn công phishing mô phỏng để kiểm tra nhận thức bảo mật của tổ chức.</p>
@@ -281,26 +255,6 @@ export default function CreateCampaign() {
             </button>
           </div>
         </form>
-      </div>
-
-      {/* Tips */}
-      <div className="mt-8 card bg-blue-500/10 border-blue-500/20">
-        <div className="flex items-start space-x-3">
-          <div className="w-6 h-6 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-blue-400 mb-1">Mẹo chuyên nghiệp</h3>
-            <ul className="text-sm text-gray-300 space-y-1">
-              <li>• Sử dụng tên người gửi và chủ đề thực tế để tăng hiệu quả</li>
-              <li>• Bao gồm lời kêu gọi hành động rõ ràng trong tin nhắn</li>
-              <li>• Thử nghiệm với nhóm nhỏ trước khi triển khai cho tất cả người nhận</li>
-              <li>• Theo dõi tỷ lệ nhấp để đo lường mức độ nhận thức bảo mật</li>
-            </ul>
-          </div>
-        </div>
       </div>
     </div>
   );
