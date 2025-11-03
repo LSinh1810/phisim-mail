@@ -1,13 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useCampaignStore from '../store/useCampaignStore';
 import api from '../api/axios';
 import CampaignCard from '../components/CampaignCard';
 import { Link } from 'react-router-dom';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
   const { campaigns, fetchCampaigns, loading, error } = useCampaignStore();
+  const [stats, setStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
 
-  useEffect(() => { fetchCampaigns(); }, []);
+  useEffect(() => { 
+    fetchCampaigns(); 
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const res = await api.get('/stats');
+      setStats(res.data);
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
 
   const totalClicks = campaigns?.reduce((sum, campaign) => sum + (campaign.clicks?.length || 0), 0) || 0;
   const totalRecipients = campaigns?.reduce((sum, campaign) => sum + (campaign.recipients?.length || 0), 0) || 0;
@@ -26,6 +43,83 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+          {/* Charts Section */}
+          {!statsLoading && stats && stats.timeSeriesData.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Click By Time Interval Chart */}
+            <div className="card">
+              <h3 className="text-lg font-semibold text-white mb-4">Lượt nhấp theo khoảng thời gian trong ngày</h3> 
+              <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                      <BarChart // Thay thế LineChart
+                          data={stats.timeSeriesData}
+                          margin={{
+                              top: 10,
+                              right: 10,
+                              left: 10,
+                              bottom: 5,
+                          }}
+                      >
+                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                          <XAxis 
+                              dataKey="time" 
+                              stroke="#9CA3AF"
+                              tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                              textAnchor="middle" 
+                              height={40}
+                          />
+                          <YAxis 
+                              stroke="#9CA3AF"
+                              tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                          />
+                          <Tooltip 
+                              formatter={(value) => [`${value} lượt`, 'Tổng số']}
+                              contentStyle={{ 
+                                  backgroundColor: '#1F2937', 
+                                  border: '1px solid #374151',
+                                  borderRadius: '8px'
+                              }}
+                              labelStyle={{ color: '#9CA3AF' }}
+                          />
+                          <Legend />
+                          <Bar // Biểu đồ cột
+                              dataKey="clicks" 
+                              fill="#8B5CF6" 
+                              name="Tổng lượt nhấp" 
+                              radius={[4, 4, 0, 0]} // Tạo góc tròn cho cột
+                          />
+                      </BarChart>
+                  </ResponsiveContainer>
+              </div>
+          </div>
+
+          {/* Top Browsers Table */}
+          <div className="card">
+            <h3 className="text-lg font-semibold text-white mb-4">Top 5 Browsers</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-700">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">#</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Browser</th>
+                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Lượt nhấp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.browserData.map((browser, index) => (
+                    <tr key={index} className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
+                      <td className="py-3 px-4 text-white">{index + 1}</td>
+                      <td className="py-3 px-4 text-white">{browser.browser}</td>
+                      <td className="py-3 px-4 text-right text-purple-400 font-semibold">{browser.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

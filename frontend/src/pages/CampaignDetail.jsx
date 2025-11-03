@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, MousePointer, Calendar, Mail, ExternalLink, Trash2 } from 'lucide-react';
+import { ArrowLeft, Users, MousePointer, Calendar, Mail, ExternalLink, Trash2, ChevronDown, ChevronUp, Globe, MapPin, Clock, Link as LinkIcon } from 'lucide-react';
 import api from '../api/axios';
 import useCampaignStore from '../store/useCampaignStore';
 import { toast } from 'sonner';
@@ -12,6 +12,7 @@ export default function CampaignDetail() {
   const [campaign, setCampaign] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [expandedEmails, setExpandedEmails] = useState({});
 
   useEffect(() => {
     fetchCampaign();
@@ -213,25 +214,82 @@ export default function CampaignDetail() {
         </div>
       </div>
 
-      {/* Recipients List */}
+      {/* Recipients List with Detailed Click Info */}
       <div className="card">
         <h3 className="text-lg font-semibold text-white mb-4">Danh sách người nhận</h3>
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="space-y-2 max-h-96 overflow-y-auto">
           {campaign.recipients?.map((email, index) => {
             const hasClicked = campaign.clicks?.some(click => click.email === email);
+            const detailedClicks = campaign.clicksByEmail?.[email] || [];
+            const isExpanded = expandedEmails[email];
+            
             return (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <Mail className="w-4 h-4 text-gray-400" />
-                  <span className="text-white">{email}</span>
+              <div key={index} className="bg-gray-800 rounded-lg overflow-hidden">
+                <div 
+                  className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-700 transition-colors"
+                  onClick={() => setExpandedEmails({ ...expandedEmails, [email]: !isExpanded })}
+                >
+                  <div className="flex items-center space-x-3">
+                    <Mail className="w-4 h-4 text-gray-400" />
+                    <span className="text-white">{email}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {hasClicked ? (
+                      <>
+                        <span className="text-green-400 text-sm">✓ Đã nhấp ({detailedClicks.length}x)</span>
+                        {detailedClicks.length > 0 && (isExpanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />)}
+                      </>
+                    ) : (
+                      <span className="text-gray-400 text-sm">Chưa nhấp</span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  {hasClicked ? (
-                    <span className="text-green-400 text-sm">✓ Đã nhấp</span>
-                  ) : (
-                    <span className="text-gray-400 text-sm">Chưa nhấp</span>
-                  )}
-                </div>
+                
+                {isExpanded && detailedClicks.length > 0 && (
+                  <div className="border-t border-gray-700 p-3 space-y-3">
+                    {detailedClicks.map((click, clickIndex) => (
+                      <div key={clickIndex} className="bg-gray-900 rounded-lg p-4 space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center space-x-2 text-gray-300">
+                            <Clock className="w-4 h-4" />
+                            <span>{new Date(click.timestamp).toLocaleString('vi-VN')}</span>
+                          </div>
+                          <span className="text-xs text-gray-500">#{click.token.substring(0, 8)}...</span>
+                        </div>
+                        
+                        {click.ip && (
+                          <div className="flex items-center space-x-2 text-sm text-gray-300">
+                            <MapPin className="w-4 h-4" />
+                            <span><strong>IP:</strong> {click.ip}</span>
+                            {click.xForwardedFor && click.xForwardedFor !== click.ip && (
+                              <span className="text-gray-500">({click.xForwardedFor})</span>
+                            )}
+                          </div>
+                        )}
+                        
+                        {click.userAgent && (
+                          <div className="flex items-start space-x-2 text-sm text-gray-300">
+                            <Globe className="w-4 h-4 mt-1" />
+                            <span className="break-all"><strong>Browser:</strong> {click.userAgent}</span>
+                          </div>
+                        )}
+                        
+                        {click.referrer && (
+                          <div className="flex items-center space-x-2 text-sm text-gray-300">
+                            <LinkIcon className="w-4 h-4" />
+                            <span className="break-all"><strong>Referrer:</strong> {click.referrer}</span>
+                          </div>
+                        )}
+                        
+                        {click.acceptLanguage && (
+                          <div className="text-sm text-gray-300">
+                            <strong>Languages:</strong> {click.acceptLanguage}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}

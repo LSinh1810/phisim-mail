@@ -1,4 +1,5 @@
 import { Campaign } from '../models/Campaign.js';
+import { Click } from '../models/Click.js';
 import nodemailer from 'nodemailer';
 
 export const createCampaign = async (req, res) => {
@@ -107,7 +108,35 @@ export const getCampaignById = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy chiến dịch" });
     }
     
-    res.json(campaign);
+    // Lấy thông tin click chi tiết từ collection Click
+    const detailedClicks = await Click.find({ campaignId: id })
+      .sort({ timestamp: -1 })
+      .lean();
+    
+    // Map clicks chi tiết theo email
+    const clicksByEmail = {};
+    detailedClicks.forEach(click => {
+      if (!clicksByEmail[click.email]) {
+        clicksByEmail[click.email] = [];
+      }
+      clicksByEmail[click.email].push({
+        timestamp: click.timestamp,
+        ip: click.ip,
+        userAgent: click.userAgent,
+        referrer: click.referrer,
+        acceptLanguage: click.acceptLanguage,
+        xForwardedFor: click.xForwardedFor,
+        token: click.token,
+      });
+    });
+    
+    const campaignWithDetails = {
+      ...campaign.toObject(),
+      clicksByEmail,
+      totalDetailedClicks: detailedClicks.length,
+    };
+    
+    res.json(campaignWithDetails);
   } catch (error) {
     console.error("Lỗi khi lấy chi tiết chiến dịch: ", error);
     res.status(500).json({ message: "Lỗi hệ thống" });

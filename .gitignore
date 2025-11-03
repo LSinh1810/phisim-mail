@@ -19,3 +19,5 @@ __pycache__/
 
 # Build caches
 .cache/
+
+*.md

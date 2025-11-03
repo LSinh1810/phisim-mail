@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import CreateCampaign from './pages/CreateCampaign';
 // @ts-ignore
 import CampaignDetail from './pages/CampaignDetail';
+// @ts-ignore
+import Login from './pages/Login';
 import { Toaster } from 'sonner';
 
 export default function App() {
@@ -47,6 +49,7 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="fade-in">
           <Routes>
+            <Route path="/login" element={<Login />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/create" element={<CreateCampaign />} />
             <Route path="/campaign/:id" element={<CampaignDetail />} />
