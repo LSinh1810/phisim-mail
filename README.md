@@ -64,4 +64,5 @@ Hệ thống phishing simulation được xây dựng với Node.js (Express), R
 
 ## Cách khởi chạy hệ thống
 - Clone từ github về hoặc tải
-- **cd** vào thư mục backend và frontend rồi chạy lệnh **npm run dev** để chạy.
+- `cd` vào thư mục backend và frontend rồi chạy lệnh `npm run dev`.
+
