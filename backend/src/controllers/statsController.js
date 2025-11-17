@@ -5,7 +5,7 @@ export const getDashboardStats = async (req, res) => {
   try {
     // Tổng hợp clicks theo thời gian (7 ngày gần nhất)
     const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 100);
     
     const clicksByTime = await Click.aggregate([
       {
